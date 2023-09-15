@@ -1,0 +1,22 @@
+<div class="container mt-5 mx-auto">
+    <div class="row">
+        {% for paper_title, paper_summary, paper_url in papers %}
+        <div class="col-12 mb-4">
+            <div class="card collapsed-card">
+                <div class="card-header">
+                    <h5 class="card-title d-inline-block mr-3">{{ paper_title }}</h5>
+                    <div class="card-tools d-inline-block">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {{ paper_summary or 'No summary available.' }}
+                    <a href="{{ paper_url }}" target="_blank" class="btn btn-primary mt-2">Read More</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

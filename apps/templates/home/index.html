@@ -1,0 +1,690 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Element injected in the BODY element -->
+{% block body_class %} sidebar-mini {% endblock body_class %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+<!-- Google Font: Source Sans Pro -->
+<link
+  href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback"
+  rel="stylesheet" />
+<!-- Font Awesome -->
+<link href="/static/assets/plugins/fontawesome-free/css/all.min.css"
+  rel="stylesheet" />
+<!-- Ionicons -->
+<link href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css"
+  rel="stylesheet" />
+<!-- Tempusdominus Bootstrap 4 -->
+<link
+  href="/static/assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css"
+  rel="stylesheet" />
+<!-- iCheck -->
+<link href="/static/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css"
+  rel="stylesheet" />
+<!-- JQVMap -->
+<link href="/static/assets/plugins/jqvmap/jqvmap.min.css" rel="stylesheet" />
+<!-- Theme style -->
+<link href="/static/assets/css/adminlte.min.css" rel="stylesheet" />
+<!-- overlayScrollbars -->
+<link
+  href="/static/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css"
+  rel="stylesheet" />
+<!-- Daterange picker -->
+<link href="/static/assets/plugins/daterangepicker/daterangepicker.css"
+  rel="stylesheet" />
+<!-- summernote -->
+<link href="/static/assets/plugins/summernote/summernote-bs4.min.css"
+  rel="stylesheet" />
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">Dashboard</h1>
+        </div><!-- /.col -->
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard v1</li>
+          </ol>
+        </div><!-- /.col -->
+      </div><!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <!-- Small boxes (Stat box) -->
+      <div class="row">
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-info">
+            <div class="inner">
+              <h3>350</h3> <!-- Replace with the actual number -->
+              <p>Papers Analyzed</p>
+          </div>
+          <div class="icon">
+              <i class="ion ion-document-text"></i>
+          </div>
+            <a class="small-box-footer" href="#">More info <i
+                class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-success">
+            <div class="inner">
+              <h3>5</h3> <!-- Replace with the actual number -->
+              <p>Top Treatments</p>
+          </div>
+          <div class="icon">
+              <i class="ion ion-medkit"></i>
+          </div>
+            <a class="small-box-footer" href="#">More info <i
+                class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-warning">
+            <div class="inner">
+              <h3>3</h3> <!-- Replace with the actual number -->
+              <p>Top Diseases</p>
+          </div>
+          <div class="icon">
+              <i class="ion ion-search"></i>
+          </div>
+            <a class="small-box-footer" href="#">More info <i
+                class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-3 col-6">
+          <!-- small box -->
+          <div class="small-box bg-danger">
+            <div class="inner">
+              <h3>12%↑</h3> <!-- Replace with the actual percentage -->
+              <p>Research Trends</p>
+          </div>
+          <div class="icon">
+              <i class="ion ion-stats-bars"></i>
+          </div>
+            <a class="small-box-footer" href="#">More info <i
+                class="fas fa-arrow-circle-right"></i></a>
+          </div>
+        </div>
+        <!-- ./col -->
+      </div>
+      <!-- /.row -->
+      <!-- Main row -->
+      <div class="row">
+        <!-- Left col -->
+        <section class="col-lg-4 connectedSortable">
+          <!-- Custom tabs (Charts with tabs)-->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-user mr-1"></i>
+                Select Sample Patient Record
+              </h3>
+              <div class="card-tools">
+                <div class="ribbon-wrapper">
+                  <div class="ribbon bg-primary">
+                    Demo Data
+                  </div>
+                </div>
+                <button class="btn btn-tool" data-card-widget="collapse"
+                  type="button">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button class="btn btn-tool" data-card-widget="remove"
+                  type="button">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div><!-- /.card-header -->
+            <div class="card-body p-0">
+              <div>
+                <button class="btn btn-user"
+                  onclick='fillTextArea("medical_info", "Sample 1 - Jane Doe")'
+                  style="background-image: url('/static/assets/img/user7-128x128.jpg');"
+                  type="button">
+                  Jane
+              </button>
+                <button class="btn btn-user"
+                onclick='fillTextArea("medical_info", "Sample 2 - John Smith")'
+                  style="background-image: url('/static/assets/img/user6-128x128.jpg');"
+                  type="button">
+                  John
+                </button>
+                <button class="btn btn-user"
+                onclick='fillTextArea("medical_info", "Sample 3 - Emily Brown")'
+                  style="background-image: url('/static/assets/img/user5-128x128.jpg');"
+                  type="button">
+                  Emily
+                </button>
+                <button class="btn btn-user"
+                onclick='fillTextArea("medical_info", "Sample 4 - Michael Johnson")'
+                  style="background-image: url('/static/assets/img/user2-160x160.jpg');"
+                  type="button">
+                  Michael
+                </button>
+              </div>
+              <style>
+            .btn-user {
+                width: 115px;
+                height: 115px;
+                border-radius: 50%; 
+                background-size: cover;
+                background-position: center;
+                color: #FFF; /* Adjust the text color to fit over the image */
+                border: none; 
+                outline: none;
+                margin: 5px; 
+                font-size: 16px; 
+                transition: transform 0.3s; 
+            }
+            
+            .btn-user:hover {
+                transform: scale(1.1); /* Optional: Add a slight zoom effect on hover */
+            }
+            </style>
+              <!-- /.users-list -->
+            </div>
+          </div><!-- /.card-body -->
+          <div class="row">
+            <div class="col-md-3">
+                <div class="info-box mb-3 bg-indigo" onclick="fillTreatmentField('box1')" style="cursor: pointer; height: 200px;">
+                    <div class="info-box-content">
+                        <span class="info-box-text">Treatment 1</span>
+                        <span class="info-box-number" id="box1"
+                              style="overflow: hidden; word-wrap: break-word; max-height: 150px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-box mb-3 bg-olive" onclick="fillTreatmentField('box2')" style="cursor: pointer; height: 200px;">
+                    <div class="info-box-content">
+                        <span class="info-box-text">Treatment 2</span>
+                        <span class="info-box-number" id="box2"
+                              style="overflow: hidden; word-wrap: break-word; max-height: 150px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-box mb-3 bg-lightblue" onclick="fillTreatmentField('box3')" style="cursor: pointer; height: 200px;">
+                    <div class="info-box-content">
+                        <span class="info-box-text">Treatment 3</span>
+                        <span class="info-box-number" id="box3"
+                              style="overflow: hidden; word-wrap: break-word; max-height: 150px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="info-box mb-3 bg-info" onclick="fillTreatmentField('box4')" style="cursor: pointer; height: 200px;">
+                    <div class="info-box-content">
+                        <span class="info-box-text">Treatment 4</span>
+                        <span class="info-box-number" id="box4"
+                              style="overflow: hidden; word-wrap: break-word; max-height: 150px;"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+          <!-- /.card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="ion ion-medkit mr-1"></i>
+                Medical Information
+              </h3>
+              <div class="card-tools">
+                <button class="btn btn-tool" data-card-widget="collapse"
+                  type="button">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button class="btn btn-tool" data-card-widget="remove"
+                  type="button">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <form action="/fetch_results" method="post">
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="medical_info">Medical Information</label>
+                  <input class="form-control" id="medical_info"
+                    name="medical_info" placeholder="Medical Information"
+                    type="text" />
+                </div>
+                <div class="form-group">
+                  <label for="proposed_treatment">Proposed Treatment</label>
+                  <input class="form-control" id="proposed_treatment"
+                    name="proposed_treatment" placeholder="Propsed Treatment"
+                    type="text" />
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputFile">File input</label>
+                  <div class="input-group">
+                    <div class="custom-file">
+                      <input class="custom-file-input" id="exampleInputFile"
+                        type="file" />
+                      <label class="custom-file-label" for="exampleInputFile">Choose
+                        file</label>
+                    </div>
+                    <div class="input-group-append">
+                      <span class="input-group-text">Upload</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button class="btn btn-primary" type="submit">Submit</button>
+              </div>
+            </form>
+            <!-- /.card-body -->
+          </div>
+          <!-- DIRECT CHAT -->
+          
+         
+          <!--/.direct-chat -->
+          <!-- TO DO List -->
+          <!-- /.card -->
+        </section>
+        <!-- /.Left col -->
+        <!-- right col (We are only adding the ID to make the widgets sortable)-->
+        <section class="col-lg-8 connectedSortable">
+          <!-- Results card -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="ion ion-search mr-1"></i>
+                Search Results
+              </h3>
+              <div class="card-tools">
+                <button class="btn btn-tool" data-card-widget="collapse"
+                  type="button">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button class="btn btn-tool" data-card-widget="remove"
+                  type="button">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+      
+              <div class="card-body">
+                <div id="loading" style="display: none;">
+                  <i class="fas fa-spinner fa-spin"></i> Summarizing Content...
+              </div>
+                <div class="container mt-5 mx-auto" id="results">
+               
+             </div>
+              </div>
+          </div>
+          <div class="card direct-chat direct-chat-primary">
+            <div class="card-header">
+              <h3 class="card-title">Direct Chat</h3>
+              <div class="card-tools">
+                <span class="badge badge-primary" title="3 New Messages">3</span>
+                <button class="btn btn-tool" data-card-widget="collapse"
+                  type="button">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <button class="btn btn-tool" data-widget="chat-pane-toggle"
+                  title="Contacts" type="button">
+                  <i class="fas fa-comments"></i>
+                </button>
+                <button class="btn btn-tool" data-card-widget="remove"
+                  type="button">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+             <!-- /.card-header -->
+             <div class="card-body">
+              <!-- Conversations are loaded here -->
+              <div class="direct-chat-messages">
+                <!-- Message. Default to the left -->
+                
+                <!-- /.contacts-list -->
+              </div>
+              <!-- /.direct-chat-pane -->
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer">
+              <form action="/send_message" method="post" id="chat-form">
+                <div class="input-group">
+                    <input class="form-control" name="message" placeholder="Type Message ..." type="text" />
+                    <span class="input-group-append">
+                        <button class="btn btn-primary" type="Submit">Send</button>
+                    </span>
+                </div>
+            </form>
+            </div>
+            <!-- /.card-footer-->
+          </div>
+      </section>
+<!-- /.card-body-->
+
+  <!-- /.row -->
+
+</div>
+
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="/static/assets/plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="/static/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+<script>
+ $(document).ready(function() {
+    $("form").submit(function(event) {
+        event.preventDefault();  // Prevent the default form submission
+
+        var formData = new FormData(this);
+
+        // Show the loading icon
+        $("#loading").show();
+
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+                console.log(data);  // Print data to console for debugging
+
+                // Update the '#results' section with the received data
+                $("#results").html(data);
+
+                // Hide the loading icon
+                $("#loading").hide();
+            },
+            error: function() {
+                console.error('Error with form submission.');
+
+                // Hide the loading icon even on error
+                $("#loading").hide();
+            }
+        });
+
+        return false;  // Further ensure the form doesn't submit the traditional way
+    });
+});
+
+</script>
+
+
+<script>
+var samples = {
+"Sample 1 - Jane Doe": `Patient Name: Jane Doe
+Age: 42 years
+Sex: Female
+Presenting Complaint: Persistent cough for 6 weeks
+
+History of Presenting Complaint:
+Jane reports having a dry cough for the past 6 weeks. It started as intermittent but has become more persistent over the past two weeks. She denies having fever, chest pain, or weight loss. The cough is more pronounced in the morning and during the night. She occasionally experiences shortness of breath after climbing stairs.
+
+Past Medical History:
+- Diagnosed with Type 2 Diabetes Mellitus 5 years ago - on Metformin
+- Hypertension for 7 years - on Amlodipine
+- Underwent an appendectomy at age 20
+
+Medications:
+- Metformin 500mg twice daily
+- Amlodipine 10mg once daily
+
+Allergies:
+Penicillin - causes rash
+
+Family History:
+Mother had breast cancer at age 55. Father has a history of coronary artery disease. One younger brother with no significant health issues.
+
+Social History:
+Jane is a non-smoker and drinks alcohol socially. She works as a school teacher and is married with two children.
+
+Review of Systems:
+- Cardiovascular: Denies chest pain, palpitations
+- Respiratory: As per the main complaint. No history of wheezing or hemoptysis.
+- Gastrointestinal: Denies abdominal pain, change in bowel habits
+- Musculoskeletal: No joint pains
+- Neurological: No headaches or dizziness`,
+
+    "Sample 2 - John Smith": `Patient Name: John Smith
+Age: 35 years
+Sex: Male
+Presenting Complaint: Episodes of vertigo for 2 weeks
+
+History of Presenting Complaint:
+John reports experiencing sudden episodes of dizziness and a spinning sensation, especially when moving his head. No associated nausea or hearing loss.
+
+Past Medical History:
+- Chronic migraines since age 20
+
+Medications:
+- Occasional ibuprofen for migraines
+
+Allergies:
+None
+
+Family History:
+Mother has a history of migraines. Father has hypertension.
+
+Social History:
+John is a smoker and consumes alcohol occasionally. He works as a software developer.
+
+Review of Systems:
+- Neurological: Occasional headaches, but no seizures or loss of consciousness.
+- ENT: No tinnitus, hearing loss, or ear fullness.
+- Gastrointestinal: Denies abdominal pain, change in bowel habits.
+- Musculoskeletal: No joint pains or muscle weakness.
+- Psychological: No anxiety, depression, or sleep disturbances.`,
+
+    "Sample 3 - Emily Brown": `Patient Name: Emily Brown
+Age: 28 years
+Sex: Female
+Presenting Complaint: Shortness of breath during exercise for 1 month
+
+History of Presenting Complaint:
+Emily reports difficulty in breathing when she jogs. She has to stop and catch her breath after 10 minutes.
+
+Past Medical History:
+- Diagnosed with asthma at age 5
+
+Medications:
+- Salbutamol inhaler as needed
+
+Allergies:
+Dust
+
+Family History:
+Mother has asthma. No other significant family history.
+
+Social History:
+Emily is a non-smoker and works as a physiotherapist.
+
+Review of Systems:
+- Respiratory: Wheezing during strenuous activities, but no night-time symptoms.
+- Cardiovascular: Denies chest pain or palpitations.
+- Gastrointestinal: Denies abdominal pain or reflux symptoms.
+- Musculoskeletal: No joint pains or muscle weakness.
+- Psychological: Occasionally anxious about health.`,
+
+    "Sample 4 - Michael Johnson": `Patient Name: Michael Johnson
+Age: 50 years
+Sex: Male
+Presenting Complaint: Mild chest discomfort for 3 days
+
+History of Presenting Complaint:
+Michael feels a tightness in his chest, especially in the evenings. No radiation of pain or associated symptoms.
+
+Past Medical History:
+- High cholesterol diagnosed at age 45
+
+Medications:
+- Atorvastatin 20mg daily
+
+Allergies:
+None
+
+Family History:
+Father had a heart attack at age 60. Mother has diabetes.
+
+Social History:
+Michael is a former smoker and drinks alcohol socially. He is a banker.
+
+Review of Systems:
+- Cardiovascular: Denies palpitations or shortness of breath.
+- Respiratory: No cough or wheezing.
+- Gastrointestinal: Denies abdominal pain or reflux symptoms.
+- Musculoskeletal: No joint or muscle pain.
+- Psychological: No anxiety, depression, or sleep disturbances.`
+  
+}
+
+var treatmentsMapping = {
+  "Sample 1 - Jane Doe": [
+    "Antitussive medication for persistent dry cough",
+    "Cardiopulmonary evaluation (like ECG and chest X-ray)",
+    "Comprehensive diabetes management plan with diet, exercise, and regular blood sugar monitoring",
+    "Review of antihypertensive medication and regular blood pressure monitoring"
+  ],
+  "Sample 2 - John Smith": [
+    "Meclizine 25mg as needed for vertigo",
+    "Propranolol 40mg daily for migraine prophylaxis",
+    "Sumatriptan 50mg as needed for migraine attacks",
+    "Vestibular rehabilitation therapy (VRT) for vertigo"
+  ],
+  "Sample 3 - Emily Brown": [
+    "Salbutamol inhaler 2 puffs every 4-6 hours as needed",
+    "Salmeterol inhaler daily for asthma maintenance",
+    "Spirometry to assess lung function",
+    "Personalized asthma action plan and peak flow meter monitoring"
+  ],
+  "Sample 4 - Michael Johnson": [
+    "12-lead ECG to assess heart rhythm",
+    "Treadmill or pharmacological stress test to assess for ischemia",
+    "Lisinopril 10mg daily for heart protection",
+    "Heart-healthy diet, regular exercise, and stress management"
+  ]
+};
+
+function fillTextArea(textareaId, sampleKey) {
+    var medicalInfo = samples[sampleKey];
+    
+    if (medicalInfo) {
+        document.getElementById(textareaId).value = medicalInfo;
+        updateInfoBoxes(sampleKey);
+    } else {
+        console.error('Invalid sample key:', sampleKey);
+    }
+}
+
+function updateInfoBoxes(sampleKey) {
+    var treatments = treatmentsMapping[sampleKey];
+    if (!treatments) return; // No treatments found for the given sampleKey
+
+    // Update the Proposed Treatment input field with the treatments list
+    document.getElementById('proposed_treatment').value = treatments.join(', ');
+
+    // Populate each 'info-box' div with a treatment from the list
+    for (let i = 0; i < 4; i++) {
+        let boxId = 'box' + (i + 1);
+        if (document.getElementById(boxId) && treatments[i]) {
+            document.getElementById(boxId).textContent = treatments[i];
+        }
+    }
+}
+function fillTreatmentField(boxId) {
+    // Get the treatment text from the clicked box
+    var treatmentText = document.getElementById(boxId).textContent;
+
+    if (treatmentText) {
+        // Fill the Proposed Treatment input field with the clicked treatment
+        document.getElementById('proposed_treatment').value = treatmentText;
+    } else {
+        console.error('Treatment not found for:', boxId);
+    }
+}
+</script>
+<script>
+  $(document).ready(function() {
+    $('#chat-form').submit(function(event) {
+        event.preventDefault();
+        
+        var userMessage = $(this).find('input[name="message"]').val();
+
+        // Send message to the backend
+        $.post('/send_message', { message: userMessage }, function(data) {
+            // Append the user message
+            $('.direct-chat-messages').append('<div class="direct-chat-msg"><div class="direct-chat-infos clearfix"><span class="direct-chat-name float-left">User</span></div><img alt="message user image" class="direct-chat-img" src="/static/assets/img/user1-128x128.jpg" /><div class="direct-chat-text">' + userMessage + '</div></div>');
+            
+            // Append the OpenAI response
+            $('.direct-chat-messages').append('<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix"><span class="direct-chat-name float-right">Simon</span></div><img alt="message user image" class="direct-chat-img" src="/static/assets/img/avatar5.png" /><div class="direct-chat-text">' + data.response + '</div></div>');
+
+            // Clear the message input field
+            $(this).find('input[name="message"]').val('');
+
+        }.bind(this), 'json');  // Added .bind(this) to ensure the context is the form
+    });
+});
+
+</script>
+
+
+<!-- jQuery -->
+</script>
+<!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
+<script>
+    $.widget.bridge('uibutton', $.ui.button)
+  </script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<script src="/static/assets/plugins/chart.js/Chart.min.js"></script>
+<!-- Sparkline -->
+<script src="/static/assets/plugins/sparklines/sparkline.js"></script>
+<!-- JQVMap -->
+<script src="/static/assets/plugins/jqvmap/jquery.vmap.min.js"></script>
+<script src="/static/assets/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>
+<!-- jQuery Knob Chart -->
+<script src="/static/assets/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+<script src="/static/assets/plugins/moment/moment.min.js"></script>
+<script src="/static/assets/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script
+  src="/static/assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Summernote -->
+<script src="/static/assets/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- overlayScrollbars -->
+<script
+  src="/static/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/static/assets/js/adminlte.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="/static/assets/js/pages/dashboard.js"></script>
+<!-- AdminLTE for demo purposes -->
+<script src="/static/assets/js/demo.js"></script>
+
+{% endblock javascripts %}
