@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 
 
+import os
 from apps.home import blueprint
 from flask import render_template, request, jsonify
-
 from jinja2 import TemplateNotFound
 from flask import Flask, render_template, render_template_string, request, redirect, url_for
 import openai
@@ -11,6 +11,15 @@ from Bio import Entrez
 import chromadb
 from chromadb.utils import embedding_functions
 from flask import flash
+from flask_socketio import SocketIO, emit
+from flask_cors import CORS
+from apps import socketio
+from dotenv import load_dotenv
+
+load_dotenv()
+api_key = os.environ["OPENAI_API_KEY"]
+openai.api_key = api_key
+
 
 @blueprint.route('/')
 @blueprint.route('/index')
@@ -59,9 +68,6 @@ def get_segment(request):
 model = "gpt-3.5-turbo-16k"
 CHROMA_HOST = "20.241.214.59"
 CHROMA_PORT = "8000"
-api_key = ["OPENAI_API_KEY"]
-
-app = Flask(__name__)
 
 
 # Initialize ChromaDB client
@@ -142,7 +148,7 @@ def store_papers_to_db(papers, query):
                       documents=papers, ids=[query for _ in papers])
 
 
-def get_pubmed_papers(query, max_results=10):
+def get_pubmed_papers(query, max_results=10, char_limit=500):
     try:
         # Use Entrez.esearch to get PubMed IDs for the given query
         handle = Entrez.esearch(db="pubmed", term=query, retmax=max_results)
@@ -162,14 +168,33 @@ def get_pubmed_papers(query, max_results=10):
                 paper = {}
                 paper["pmid"] = record["MedlineCitation"]["PMID"]
                 paper["title"] = record["MedlineCitation"]["Article"]["ArticleTitle"]
-                
-                # Construct the paper's URL
                 paper["url"] = base_url + str(paper["pmid"])
-                
+
                 # Check for abstract before accessing
-                abstracts = record["MedlineCitation"]["Article"].get("Abstract", {}).get("AbstractText", [])
-                paper["abstract"] = " ".join([abs_elem for abs_elem in abstracts if abs_elem])
+                abstracts = record["MedlineCitation"]["Article"].get(
+                    "Abstract", {}).get("AbstractText", [])
+                paper["abstract"] = " ".join(
+                    [abs_elem for abs_elem in abstracts if abs_elem])
+
+                # Check for link-outs (this is a basic example and might need refining)
+                linkouts = record["PubmedData"].get("LinkOutList", [])
+                paper["linkouts"] = [link["URL"] for link in linkouts if "URL" in link]
+
+                # Decide whether to summarize
+                if len(paper["abstract"]) > char_limit:
+                    paper["summary_required"] = True
+                else:
+                    paper["summary_required"] = False
+
                 papers.append(paper)
+                
+                # Print the paper details
+                print("Paper Title:", paper["title"])
+                print("Abstract:", paper["abstract"])
+                print("URL:", paper["url"])
+                print("Linkouts:", paper["linkouts"])
+                print("Summary Required:", paper["summary_required"])
+                print("-----------------------------")
 
     except Exception as e:
         error_message = f"There was an issue fetching data from PubMed: {str(e)}"
@@ -178,9 +203,7 @@ def get_pubmed_papers(query, max_results=10):
     return papers, None
 
 
-
-
-def research_assistant(medical_history):
+def research_assistant_generator(medical_history, chunk_size=2):
     """Assist in finding and summarizing medical research papers based on a detailed medical history."""
 
     # Initialize summarized_papers and messages lists
@@ -201,68 +224,59 @@ def research_assistant(medical_history):
         "\n".join(search_queries)
     messages.append(search_queries_response)
 
-    for query in search_queries:
-        papers, _ = get_pubmed_papers(query, max_results=1)
+    # Process search queries in chunks
+    for i in range(0, len(search_queries), chunk_size):
+        chunk_queries = search_queries[i:i+chunk_size]
+
+        for query in chunk_queries:
+            papers, _ = get_pubmed_papers(query, max_results=1)
+
+            if not papers:
+                continue
+
+            for paper in papers:
+                title = paper.get('title', "Title not available")
+
+                # Decide whether to summarize
+                if paper["summary_required"]:
+                    # Summarize the paper using GPTChat
+                    summary_prompt = f"Provide a brief summary for the paper titled '{title}' which discusses '{paper['abstract'][:100]}...'"
+                    summary_text = chat_instance.get_gpt3_response(user_input=summary_prompt)
+                else:
+                    summary_text = paper["abstract"]
+
+                yield title, summary_text, paper["url"], paper.get("linkouts", [])
 
 
-        if not papers:
-            continue
-
-        paper = papers[0]
-
-        # Extract the URL or DOI from the paper object
-        paper_url = getattr(paper, 'url', '#')
-
-        # Extract title
-        title = paper.get('title', "Title not available")
-        print(paper)
-
-        # Summarize the paper using GPTChat
-        summary_prompt = f"Provide a brief summary for the paper titled '{title}' which discusses '{paper['abstract'][:100] if 'abstract' in paper else 'Abstract not available.'}...'"
-        summary_text = chat_instance.get_gpt3_response(
-            user_input=summary_prompt)
-        print(summary_prompt)
 
 
-        summarized_papers.append((title, summary_text, paper_url))
-
-    return search_queries_response, summarized_papers, messages
 
 
-@blueprint.route('/fetch_results', methods=['POST'])
-def fetch_results():
-    error_message = None
-    papers = []
 
-    try:
-        medical_info = request.form['medical_info']
-        proposed_treatment = request.form['proposed_treatment']
+@socketio.on('fetch_results')
+def handle_fetch_results(data):
+    print("Handling fetch_results Socket.IO event.")
+    medical_info = data['medical_info']
+    proposed_treatment = data['proposed_treatment']
 
-        print(f"Medical Info Received: {medical_info}")
-        print(f"Proposed Treatment Received: {proposed_treatment}")
+    for paper_title, paper_summary, paper_url, paper_linkouts in research_assistant_generator(medical_info):
+        emit('new_summary', {
+            'paper_title': paper_title, 
+            'paper_summary': paper_summary,
+            'paper_url': paper_url,
+            'paper_linkouts': paper_linkouts
+        })
+        socketio.sleep(0)  # Yield control to allow other events to be processed
 
-        # Construct the search query using the provided information
-        search_query = construct_search_query(medical_info, proposed_treatment)
-        print(f"Constructed Search Query: {search_query}")
+    # Indicate the end of streaming
+    emit('streaming_complete')
 
-        # Use research_assistant to get the summarized papers
-        _, summarized_papers, _ = research_assistant(medical_info)
 
-        # If there's an error message
-        if not summarized_papers:
-            print(f"Error while fetching papers: No summarized papers found.")
 
-        # Render the results section
-        return render_template('home/results.html', papers=summarized_papers, error_message=error_message)
-
-    except Exception as e:
-        print(f"Error occurred: {str(e)}")
-        error_message = "An unexpected error occurred while processing the request."
-        return render_template('home/results.html', papers=[], error_message=error_message)
-@blueprint.route('/send_message', methods=['POST'])
-def send_message():
-    user_message = request.form['message']
-    
+@socketio.on('user_message')
+def handle_user_message(data):
+    user_message = data['message']
+    # You can use your existing logic to fetch summarized papers, create the context, etc.
     # Fetch the summarized papers from Chroma DB to use as context
     summarized_papers = check_vector_db(user_message)
     initial_messages = []
@@ -270,17 +284,17 @@ def send_message():
     if summarized_papers:
         for paper in summarized_papers:
             if 'abstract' in paper:
-                initial_messages.append({'role': 'assistant', 'content': paper['abstract']})
+                initial_messages.append(
+                    {'role': 'assistant', 'content': paper['abstract']})
 
-    # Use the GPTChat class to communicate with OpenAI and get a response
-    chat_instance = GPTChat(sys_message="You are a helpful medical research assistant.", model=model, initial_messages=initial_messages)
+    chat_instance = GPTChat(sys_message="You are a helpful medical research assistant.",
+                            model=model, initial_messages=initial_messages)
     response = chat_instance.get_gpt3_response(user_message)
 
-    return jsonify({"response": response})
-
-
+    # Emit the AI's response to the client
+    emit('ai_response', {'response': response})
 
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app)

@@ -39,6 +39,9 @@
 <!-- summernote -->
 <link href="/static/assets/plugins/summernote/summernote-bs4.min.css"
   rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+
+
 
 {% endblock stylesheets %}
 
@@ -263,7 +266,7 @@
               </div>
             </div>
             <!-- /.card-header -->
-            <form action="/fetch_results" method="post">
+            <form id="medical-info-form" action="/fetch_results" method="post">
               <div class="card-body">
                 <div class="form-group">
                   <label for="medical_info">Medical Information</label>
@@ -294,17 +297,23 @@
               </div>
               <!-- /.card-body -->
               <div class="card-footer">
-                <button class="btn btn-primary" type="submit">Submit</button>
-              </div>
-            </form>
-            <!-- /.card-body -->
-          </div>
+                <!-- Medical Information Form Submission -->
+                <div class="input-group">
+                    <input class="form-control" name="medical_info" placeholder="Medical Information" type="text" />
+                    <span class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Submit Medical Info</button>
+                    </span>
+                </div>
+            </div>
+        </form>     
+        
+        
+        
+        
+              
           <!-- DIRECT CHAT -->
           
          
-          <!--/.direct-chat -->
-          <!-- TO DO List -->
-          <!-- /.card -->
         </section>
         <!-- /.Left col -->
         <!-- right col (We are only adding the ID to make the widgets sortable)-->
@@ -328,54 +337,55 @@
               </div>
             </div>
       
-              <div class="card-body">
-                <div id="loading" style="display: none;">
+            <div class="card-body">
+              <div id="loading" style="display: none;">
                   <i class="fas fa-spinner fa-spin"></i> Summarizing Content...
               </div>
-                <div class="container mt-5 mx-auto" id="results">
-               
-             </div>
+              <div class="container mt-5 mx-auto" id="results">
+                  <!-- Render summarized results here using JavaScript -->
               </div>
+          </div>
+          
           </div>
           <div class="card direct-chat direct-chat-primary">
             <div class="card-header">
-              <h3 class="card-title">Direct Chat</h3>
-              <div class="card-tools">
-                <span class="badge badge-primary" title="3 New Messages">3</span>
-                <button class="btn btn-tool" data-card-widget="collapse"
-                  type="button">
-                  <i class="fas fa-minus"></i>
-                </button>
-                <button class="btn btn-tool" data-widget="chat-pane-toggle"
-                  title="Contacts" type="button">
-                  <i class="fas fa-comments"></i>
-                </button>
-                <button class="btn btn-tool" data-card-widget="remove"
-                  type="button">
-                  <i class="fas fa-times"></i>
-                </button>
-              </div>
+                <h3 class="card-title">Direct Chat</h3>
+                <div class="card-tools">
+                    <span class="badge badge-primary" title="3 New Messages">3</span>
+                    <button class="btn btn-tool" data-card-widget="collapse" type="button">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="btn btn-tool" data-widget="chat-pane-toggle" title="Contacts" type="button">
+                        <i class="fas fa-comments"></i>
+                    </button>
+                    <button class="btn btn-tool" data-card-widget="remove" type="button">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
             </div>
-             <!-- /.card-header -->
-             <div class="card-body">
-              <!-- Conversations are loaded here -->
-              <div class="direct-chat-messages">
-                <!-- Message. Default to the left -->
-                
-                <!-- /.contacts-list -->
-              </div>
-              <!-- /.direct-chat-pane -->
+            <!-- /.card-header -->
+            <div class="card-body">
+                <!-- Conversations are loaded here -->
+                <div class="direct-chat-messages">
+                    <!-- Message. Default to the left -->
+                </div>
+                <!-- /.direct-chat-pane -->
             </div>
             <!-- /.card-body -->
             <div class="card-footer">
-              <form action="/send_message" method="post" id="chat-form">
+              <form action="#" method="post" id="chat-form">
                 <div class="input-group">
-                    <input class="form-control" name="message" placeholder="Type Message ..." type="text" />
-                    <span class="input-group-append">
-                        <button class="btn btn-primary" type="Submit">Send</button>
-                    </span>
+                  <input class="form-control" id="userInput" name="message" placeholder="Type Message ..." type="text" />
+
+
+                  <span class="input-group-append">
+                    <button class="btn btn-primary" type="submit">Send Chat Message</button>
+
+                  </span>
                 </div>
-            </form>
+              </form>
+            </div>
+        </div>
             </div>
             <!-- /.card-footer-->
           </div>
@@ -395,44 +405,125 @@
 <script src="/static/assets/plugins/jquery/jquery.min.js"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="/static/assets/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Define a template for paper summaries -->
+<script id="summary-template" type="text/template">
+  <div class="col-12 mb-4">
+      <div class="card collapsed-card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 10px; transition: transform 0.2s;">
+          <div class="card-header" style="cursor: pointer;" onmouseover="this.parentNode.style.transform='scale(1.05)';" onmouseout="this.parentNode.style.transform='scale(1)';">
+              <h5 class="card-title d-inline-block mr-3 font-weight-bold"></h5>
+              <div class="card-tools d-inline-block">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-plus"></i>
+                  </button>
+              </div>
+          </div>
+          <div class="card-body"></div>
+          <div class="card-footer">
+            <div class="linkouts-section mt-3">
+              <!-- Placeholder for link-outs -->
+          </div>
+              <!-- Placeholder for metadata -->
+              <small class="text-muted">
+                Author(s): <span class="author-name"></span>, Published: <span class="publish-date"></span>, Journal: <span class="journal-name"></span>
+            </small>
+              <!-- Placeholder for action button -->
+              <a href="#" class="btn btn-primary btn-sm float-right">Read More</a>
+          </div>
+      </div>
+  </div>
+</script>
 <script>
- $(document).ready(function() {
-    $("form").submit(function(event) {
-        event.preventDefault();  // Prevent the default form submission
+  $(document).ready(function() {
+      const socket = io.connect();
+  
+      socket.on('new_summary', function(data) {
+          const summaryTemplate = $('#summary-template').html();
+          const $summary = $(summaryTemplate);
+          const $linkoutsSection = $summary.find('.linkouts-section');
+  
+          data.paper_linkouts.forEach(linkout => {
+              const $linkoutElement = $(`<a href="${linkout.link}" target="_blank" class="mr-2">${linkout.text}</a>`);
+              $linkoutsSection.append($linkoutElement);
+          });
+  
+          $summary.find('.card-title').text(data.paper_title);
+          $summary.find('.card-body').html(data.paper_summary || 'No abstract available.');
+          $summary.find('.btn-primary').attr('href', data.paper_url);
+          $summary.find('.author-name').text(data.paper_authors || '[Author Name]');
+          $summary.find('.publish-date').text(data.paper_date || '[Date]');
+          $summary.find('.journal-name').text(data.paper_journal || '[Journal Name]');
+  
+          $("#results").append($summary);
+      });
+  
+      socket.on('streaming_complete', function() {
+          setTimeout(() => {
+              $("#loading").hide();
+          }, 1000);
+      });
+      socket.on('ai_response', function(data) {
+    const aiResponse = data.response;
 
-        var formData = new FormData(this);
+    // Append AI's response to the chat
+    $(".direct-chat-messages").append(`
+        <div class="direct-chat-msg">
+            <div class="direct-chat-infos clearfix">
+                <span class="direct-chat-name float-left">Assistant</span>
+                <span class="direct-chat-timestamp float-right">Now</span>
+            </div>
+            <!-- You can replace the 'path-to-assistant-avatar' with an actual path to an image for the assistant -->
+            <img class="direct-chat-img" src="/static/assets/img/avatar5.png" alt="Assistant Image">
+            <div class="direct-chat-text">
+                ${aiResponse}
+            </div>
+        </div>`);
 
-        // Show the loading icon
-        $("#loading").show();
-
-        $.ajax({
-            url: $(this).attr('action'),
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(data) {
-                console.log(data);  // Print data to console for debugging
-
-                // Update the '#results' section with the received data
-                $("#results").html(data);
-
-                // Hide the loading icon
-                $("#loading").hide();
-            },
-            error: function() {
-                console.error('Error with form submission.');
-
-                // Hide the loading icon even on error
-                $("#loading").hide();
-            }
-        });
-
-        return false;  // Further ensure the form doesn't submit the traditional way
-    });
+    // Scroll to the latest message
+    $(".direct-chat-messages").scrollTop($(".direct-chat-messages")[0].scrollHeight);
 });
 
+      $("#chat-form").submit(function(event) {
+      event.preventDefault();
+      const userMessage = $("#userInput").val();
+
+      // Append user message to chat
+      $(".direct-chat-messages").append(`
+          <div class="direct-chat-msg right">
+              <div class="direct-chat-infos clearfix">
+                  <span class="direct-chat-name float-right">You</span>
+                  <span class="direct-chat-timestamp float-left">Now</span>
+              </div>
+              <!-- Replace 'path-to-user-avatar' with the actual path to the user's avatar image -->
+              <img class="direct-chat-img" src="/static/assets/img/user1-128x128.jpg" alt="User Image">
+              <div class="direct-chat-text">
+                  ${userMessage}
+              </div>
+          </div>`);
+
+      // Send the message to the server
+      socket.emit('user_message', { message: userMessage });
+
+      // Clear the input
+      $("#userInput").val('');
+
+      // Scroll to the latest message
+      $(".direct-chat-messages").scrollTop($(".direct-chat-messages")[0].scrollHeight);
+    });
+
+    // Handle the medical information form submission
+    $("#medical-info-form").submit(function(event) {
+      event.preventDefault();
+      const formData = {
+        medical_info: $('input[name="medical_info"]').val(),
+        proposed_treatment: $('input[name="proposed_treatment"]').val()
+      };
+      socket.emit('fetch_results', formData);
+      $("#loading").show();
+    });
+  });
 </script>
+  
+  
 
 
 <script>
@@ -626,29 +717,6 @@ function fillTreatmentField(boxId) {
         console.error('Treatment not found for:', boxId);
     }
 }
-</script>
-<script>
-  $(document).ready(function() {
-    $('#chat-form').submit(function(event) {
-        event.preventDefault();
-        
-        var userMessage = $(this).find('input[name="message"]').val();
-
-        // Send message to the backend
-        $.post('/send_message', { message: userMessage }, function(data) {
-            // Append the user message
-            $('.direct-chat-messages').append('<div class="direct-chat-msg"><div class="direct-chat-infos clearfix"><span class="direct-chat-name float-left">User</span></div><img alt="message user image" class="direct-chat-img" src="/static/assets/img/user1-128x128.jpg" /><div class="direct-chat-text">' + userMessage + '</div></div>');
-            
-            // Append the OpenAI response
-            $('.direct-chat-messages').append('<div class="direct-chat-msg right"><div class="direct-chat-infos clearfix"><span class="direct-chat-name float-right">Simon</span></div><img alt="message user image" class="direct-chat-img" src="/static/assets/img/avatar5.png" /><div class="direct-chat-text">' + data.response + '</div></div>');
-
-            // Clear the message input field
-            $(this).find('input[name="message"]').val('');
-
-        }.bind(this), 'json');  // Added .bind(this) to ensure the context is the form
-    });
-});
-
 </script>
 
 
